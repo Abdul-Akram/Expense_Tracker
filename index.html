@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget_Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background-color: #e9ecef;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .head {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .head h2 {
+            font-weight: bold;
+            color: #495057;
+            font-size: 1.5rem;
+        }
+
+        .entries {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .entries div {
+            flex: 1;
+        }
+
+        .entries p {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        .add {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: #1abc32;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add:hover {
+            background-color: #0056b3;
+        }
+
+        .lower table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+            color: #495057;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        td .delete-button {
+            padding: 0.3rem 0.6rem;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        td .delete-button:hover {
+            background-color: #ff1a1a;
+        }
+
+        td .edit-button {
+            padding: 0.3rem 0.6rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        td .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .edit-border {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="head">
+            <h2>Budget_Tracker</h2>
+        </div>
+        <div class="upper">
+            <div class="entries">
+                <div>
+                    <p>Name</p>
+                    <input type="text" name="name" id="name">
+                </div>
+                <div>
+                    <p>Amount</p>
+                    <input type="number" name="amount" id="amount">
+                </div>
+                <div>
+                    <p>Category</p>
+                    <select name="Category" id="Category">
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="medical">Medical</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div>
+                    <p>Date</p>
+                    <input type="date" name="date" id="date">
+                </div>
+            </div>
+            <button class="add" onclick="add()">Add Expense</button>
+            <div class="error"></div>
+        </div>
+        <div class="lower">
+            <table>
+                <tr>
+                    <th>Expense Name</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        function add() {
+            let name = document.getElementById("name").value;
+            let amount = document.getElementById("amount").value;
+            let category = document.getElementById("Category").value;
+            let date = document.getElementById("date").value;
+            if (name !== "" && amount !== "" && category !== "" && date !== "") {
+                const table = document.querySelector("table");
+                const row = document.createElement("tr");
+                const nameCell = document.createElement("td");
+                const amountCell = document.createElement("td");
+                const categoryCell = document.createElement("td");
+                const dateCell = document.createElement("td");
+                const actionCell = document.createElement("td");
+                const deleteButton = document.createElement("button");
+                const editButton = document.createElement("button");
+
+                nameCell.innerText = name;
+                amountCell.innerHTML = `<input type="number" name="e_amount" value="${amount}" readonly>`;
+                categoryCell.innerText = category;
+                dateCell.innerText = date;
+                deleteButton.innerText = "Delete";
+                deleteButton.classList.add("delete-button");
+                deleteButton.onclick = function () {
+                    table.removeChild(row);
+                };
+                editButton.innerText = "Edit";
+                editButton.classList.add("edit-button");
+                let on_edit = false;
+                editButton.onclick = function () {
+                    const inputElement = amountCell.querySelector('input[name="e_amount"]');
+                    if (!on_edit) {
+                        on_edit = true;
+                        inputElement.removeAttribute("readonly");
+                        inputElement.setAttribute("autofocus", "true");
+                        inputElement.classList.add("edit-border");
+                        editButton.innerText = "Set";
+                    } else {
+                        on_edit = false;
+                        inputElement.setAttribute("readonly", "true");
+                        inputElement.classList.remove("edit-border");
+                        editButton.innerText = "Edit";
+                    }
+                };
+
+                actionCell.appendChild(deleteButton);
+                actionCell.appendChild(editButton);
+                row.appendChild(nameCell);
+                row.appendChild(amountCell);
+                row.appendChild(categoryCell);
+                row.appendChild(dateCell);
+                row.appendChild(actionCell);
+
+                table.appendChild(row);
+
+                document.getElementById("name").value = "";
+                document.getElementById("amount").value = "";
+                document.getElementById("Category").value = "food";
+                document.getElementById("date").value = "";
+                document.querySelector(".error").innerHTML = "";
+            } else {
+                document.querySelector(".error").innerHTML = "<p>⚠️ Please fill all the fields</p>";
+            }
+        }
+    </script>
+</body>
+
+</html>
